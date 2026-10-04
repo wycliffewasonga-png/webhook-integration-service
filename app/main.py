@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Header, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import hashlib
 import hmac
@@ -56,10 +57,13 @@ def receive_webhook(
         )
 
     if event.event_id in processed_events:
-        return {
-            "status": "duplicate",
-            "event_id": event.event_id
-        }
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "duplicate",
+                "event_id": event.event_id
+            }
+        )
 
     processed_events.add(event.event_id)
 
